@@ -18,11 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         NotificationsUtils.requestAuthorization()
+        #if DEBUG
+            //echo -n '{"message":"message", "hello":"hello"}' | nc -4u -w1 192.168.0.16 9930
+            application.listenForRemoteNotifications()
+        #else
+            application.registerForRemoteNotifications()
+        #endif
+        
         return true
     }
     
-
-
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -45,6 +50,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    //Notifications
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        //if(localtoken != deviceToken) send to server
+        print("registered token in APN: " + String(deviceToken.hashValue))
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("error registered token in APN: " + error.localizedDescription)
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("received remote notidication: " + userInfo.description)
+        AlertViewUtils.showAlert(uiViewController: (self.window?.rootViewController!)!, message: userInfo.description)
+        
+    }
 
 }
 

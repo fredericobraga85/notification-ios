@@ -6,6 +6,7 @@
 //  Copyright © 2019 Fred. All rights reserved.
 //
 
+import UIKit
 import Foundation
 import UserNotifications
 
@@ -34,5 +35,6 @@ class NotificationsUtils{
         let center = UNUserNotificationCenter.current()
         center.setNotificationCategories([generalCategory])
     }
+
 }
 
